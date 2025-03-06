@@ -41,12 +41,44 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //Write your code here//
 
 //CHALLENGE 1: GET All posts
+app.get("/posts", (req, res) => {
+  res.json(posts);
+})
 
 //CHALLENGE 2: GET a specific post by id
+app.get("/posts/:id", (req, res) => {
+  const post = posts.find((post) => post.id === parseInt(req.params.id));
+  if (!post) {
+    return res.status(404).json({ error: `Post with id ${req.params.id} not found`})
+  }
+  res.json(post);
+})
 
 //CHALLENGE 3: POST a new post
+app.post("/posts", (req, res) => {
+  const newPost = {
+    id: lastId + 1,
+    title: req.body.title,
+    content: req.body.content,
+    author: req.body.author,
+    date: new Date().toISOString(),
+  }
+  posts.push(newPost);
+  lastId++;
+  res.status(201).json(newPost);
+})
 
 //CHALLENGE 4: PATCH a post when you just want to update one parameter
+app.patch("/posts/:id", (req, res) => {
+  const post = posts.find((post) => post.id === parseInt(req.params.id));
+  if (!post) {
+    return res.status(404).json({ error: `Post with id ${req.params.id} not found`})
+  }
+  post.title = req.body.title || post.title;
+  post.content = req.body.content || post.content;
+  post.author = req.body.author || post.author;
+  res.json(post);
+});
 
 //CHALLENGE 5: DELETE a specific post by providing the post id.
 
