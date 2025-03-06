@@ -42,6 +42,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //CHALLENGE 1: GET All posts
 app.get("/posts", (req, res) => {
+  console.log(posts);
   res.json(posts);
 })
 
@@ -56,24 +57,24 @@ app.get("/posts/:id", (req, res) => {
 
 //CHALLENGE 3: POST a new post
 app.post("/posts", (req, res) => {
+  const newId = lastId += 1;
   const newPost = {
-    id: lastId + 1,
+    id: newId,
     title: req.body.title,
     content: req.body.content,
     author: req.body.author,
     date: new Date().toISOString(),
   }
+  lastId = newId;
   posts.push(newPost);
-  lastId++;
   res.status(201).json(newPost);
 })
 
 //CHALLENGE 4: PATCH a post when you just want to update one parameter
 app.patch("/posts/:id", (req, res) => {
   const post = posts.find((post) => post.id === parseInt(req.params.id));
-  if (!post) {
-    return res.status(404).json({ error: `Post with id ${req.params.id} not found`})
-  }
+  if (!post) return res.status(404).json({ error: `Post with id ${req.params.id} not found`});
+
   post.title = req.body.title || post.title;
   post.content = req.body.content || post.content;
   post.author = req.body.author || post.author;
